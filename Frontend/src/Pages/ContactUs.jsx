@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 
 export default function ContactUs() {
    const [formData, setFormData] = useState({
@@ -37,17 +37,17 @@ export default function ContactUs() {
    };
 
    return (
-      <section className="text-gray-600 body-font bg-gradient-to-b from-gray-50 to-gray-100 py-12 px-4">
+      <section className="text-gray-600 dark:text-gray-400 body-font bg-gradient-to-b from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-900 py-12 px-4">
          <div className="container mx-auto max-w-4xl">
             {/* Header */}
             <div className="text-center mb-12">
-               <h2 className="text-4xl font-bold text-gray-900 mb-4">Get in Touch</h2>
-               <p className="text-lg text-gray-600 mx-auto max-w-xl">
+               <h2 className="text-4xl font-bold text-gray-900 dark:text-white mb-4">Get in Touch</h2>
+               <p className="text-lg text-gray-600 dark:text-gray-400 mx-auto max-w-xl">
                   Have questions about our courses? Need support? We'd love to hear from you!
                </p>
             </div>
 
-            <div className="flex flex-col lg:flex-row gap-8 min-w-[1000px]">
+            <div className="flex flex-col lg:flex-row gap-8">
                {/* Contact Information */}
                <div className="lg:w-1/3 bg-indigo-600 text-white p-8 rounded-lg shadow-lg">
                   <h3 className="text-2xl font-bold mb-6">Contact Information</h3>
@@ -107,16 +107,16 @@ export default function ContactUs() {
                </div>
 
                {/* Contact Form */}
-               <div className="lg:w-2/3 bg-white p-8 rounded-lg shadow-lg">
-                  <h3 className="text-2xl font-bold text-gray-900 mb-6">Send Us a Message</h3>
+               <div className="lg:w-2/3 bg-white dark:bg-gray-800 p-8 rounded-lg shadow-lg">
+                  <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">Send Us a Message</h3>
 
                   {formStatus && (
                      <div
                         className={`p-4 mb-6 rounded ${formStatus.type === 'error'
-                              ? 'bg-red-50 text-red-700 border-l-4 border-red-500'
+                              ? 'bg-red-50 text-red-700 border-l-4 border-red-500 dark:bg-red-900/30 dark:text-red-400'
                               : formStatus.type === 'success'
-                                 ? 'bg-green-50 text-green-700 border-l-4 border-green-500'
-                                 : 'bg-blue-50 text-blue-700 border-l-4 border-blue-500'
+                                 ? 'bg-green-50 text-green-700 border-l-4 border-green-500 dark:bg-green-900/30 dark:text-green-400'
+                                 : 'bg-blue-50 text-blue-700 border-l-4 border-blue-500 dark:bg-blue-900/30 dark:text-blue-400'
                            }`}
                      >
                         {formStatus.message}
@@ -126,27 +126,27 @@ export default function ContactUs() {
                   <form onSubmit={handleSubmit}>
                      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div>
-                           <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-1">Full Name</label>
+                           <label htmlFor="name" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Full Name</label>
                            <input
                               type="text"
                               id="name"
                               name="name"
                               value={formData.name}
                               onChange={handleChange}
-                              className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-300 focus:border-indigo-500 transition-colors"
+                              className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-300 focus:border-indigo-500 transition-colors dark:bg-gray-700 dark:border-gray-600 dark:text-white"
                               placeholder="John Doe"
                               required
                            />
                         </div>
                         <div>
-                           <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">Email Address</label>
+                           <label htmlFor="email" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Email Address</label>
                            <input
                               type="email"
                               id="email"
                               name="email"
                               value={formData.email}
                               onChange={handleChange}
-                              className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-300 focus:border-indigo-500 transition-colors"
+                              className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-300 focus:border-indigo-500 transition-colors dark:bg-gray-700 dark:border-gray-600 dark:text-white"
                               placeholder="john@example.com"
                               required
                            />
@@ -154,27 +154,27 @@ export default function ContactUs() {
                      </div>
 
                      <div className="mt-6">
-                        <label htmlFor="subject" className="block text-sm font-medium text-gray-700 mb-1">Subject</label>
+                        <label htmlFor="subject" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Subject</label>
                         <input
                            type="text"
                            id="subject"
                            name="subject"
                            value={formData.subject}
                            onChange={handleChange}
-                           className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-300 focus:border-indigo-500 transition-colors"
+                           className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-300 focus:border-indigo-500 transition-colors dark:bg-gray-700 dark:border-gray-600 dark:text-white"
                            placeholder="How can we help you?"
                         />
                      </div>
 
                      <div className="mt-6">
-                        <label htmlFor="message" className="block text-sm font-medium text-gray-700 mb-1">Your Message</label>
+                        <label htmlFor="message" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Your Message</label>
                         <textarea
                            id="message"
                            name="message"
                            value={formData.message}
                            onChange={handleChange}
                            rows="5"
-                           className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-300 focus:border-indigo-500 transition-colors"
+                           className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-300 focus:border-indigo-500 transition-colors dark:bg-gray-700 dark:border-gray-600 dark:text-white"
                            placeholder="Tell us what you need help with..."
                            required
                         />

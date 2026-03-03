@@ -1,4 +1,7 @@
 @import "tailwindcss";
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap');
+
+@custom-variant dark (&:where(.dark, .dark *));
 
 @layer base {
    body {
@@ -7,4 +10,27 @@
       height: 100%;
       overflow-x: hidden;
    }
+}
+
+/* ─── Auth Page Animations ─── */
+@keyframes auth-float {
+   0%, 100% { transform: translateY(0) rotate(0deg); }
+   33% { transform: translateY(-15px) rotate(2deg); }
+   66% { transform: translateY(8px) rotate(-1deg); }
+}
+
+@keyframes auth-float-alt {
+   0%, 100% { transform: translateY(0) rotate(0deg); }
+   33% { transform: translateY(12px) rotate(-2deg); }
+   66% { transform: translateY(-10px) rotate(1.5deg); }
+}
+
+@keyframes auth-gradient {
+   0%, 100% { background-position: 0% 50%; }
+   50% { background-position: 100% 50%; }
+}
+
+@keyframes auth-fade-in {
+   from { opacity: 0; transform: translateY(12px); }
+   to { opacity: 1; transform: translateY(0); }
 }

@@ -1,8 +1,9 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { FaArrowLeft, FaLock, FaShoppingCart, FaTrash } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';
 import { useCart } from '../Context/CartContext';
 import API from '../utils/api';
+import { toast } from '../utils/toast';
 
 const Cart = () => {
    const [cartItems, setCartItems] = useState([]);
@@ -27,7 +28,6 @@ const Cart = () => {
             headers: { token }
          });
 
-         console.log(response.data);
          setCartItems(response.data.cartItems);
          setTotalPrice(response.data.totalPrice);
          setError(null);
@@ -42,7 +42,6 @@ const Cart = () => {
 
    const removeCourseFromCart = async (courseId) => {
       const token = localStorage.getItem('token');
-      console.log(courseId);
       try {
          await API.delete('/cart', {
             headers: { token },
@@ -50,7 +49,7 @@ const Cart = () => {
          });
 
          setCartItems(prevItems => prevItems.filter(item => item.courseId !== courseId)); 
-         alert("Removed Course from the Cart");
+         toast.success("Course removed from cart");
          fetchCartCount();
          fetchCartItems();
       } catch (err) {
@@ -110,8 +109,7 @@ const Cart = () => {
                   );
 
                   // Show success message
-                  alert("Payment Successful! You are now enrolled in the courses.");
-                  console.log(verificationResponse.data);
+                  toast.success("Payment successful! You are now enrolled.");
                   removeCourseFromCart(cartItems.map(item => item.courseId));
                   fetchCartCount();
                   
@@ -149,32 +147,32 @@ const Cart = () => {
    if (loading) {
       return (
          <div className="flex flex-col justify-center items-center h-64 space-y-4">
-            <div className="text-xl font-semibold">Loading your cart...</div>
-            <div className="w-12 h-12 border-4 border-blue-400 border-dashed rounded-full animate-spin"></div>
+            <div className="text-xl font-semibold dark:text-white">Loading your cart...</div>
+            <div className="w-12 h-12 border-4 border-indigo-400 border-dashed rounded-full animate-spin"></div>
          </div>
       );
    }
 
 
    return (
-      <div className="container mx-auto px-4 py-8">
-         <h1 className="text-3xl font-bold mb-6">Checkout</h1>
+      <div className="container mx-auto px-4 py-8 min-h-screen dark:bg-gray-900">
+         <h1 className="text-3xl font-bold mb-6 dark:text-white">Checkout</h1>
 
          {error && (
-            <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4 transition duration-300">
+            <div className="bg-red-100 dark:bg-red-900/30 border border-red-400 dark:border-red-800 text-red-700 dark:text-red-400 px-4 py-3 rounded mb-4 transition duration-300">
                {error}
             </div>
          )}
 
 
          {cartItems.length === 0 ? (
-            <div className="text-center py-12 bg-white rounded-lg shadow-md">
+            <div className="text-center py-12 bg-white dark:bg-gray-800 rounded-lg shadow-md">
                <FaShoppingCart className="w-24 h-24 mx-auto mb-6 text-gray-300" />
-               <p className="text-2xl font-semibold mb-4">Your cart is empty</p>
-               <p className="text-gray-500 mb-8">Looks like you haven't added any courses yet.</p>
+               <p className="text-2xl font-semibold mb-4 dark:text-white">Your cart is empty</p>
+               <p className="text-gray-500 dark:text-gray-400 mb-8">Looks like you haven't added any courses yet.</p>
                <button
                   onClick={continueShopping}
-                  className="bg-blue-600 text-white px-8 py-3 rounded-full hover:bg-blue-700 transition-all flex items-center mx-auto"
+                  className="bg-indigo-600 hover:bg-indigo-700 text-white px-8 py-3 rounded-full transition-all flex items-center mx-auto"
                >
                   <FaArrowLeft className="mr-2" /> Browse Courses
                </button>
@@ -184,11 +182,11 @@ const Cart = () => {
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
                {/* Cart Items - Left Side (2/3 width on large screens) */}
                <div className="lg:col-span-2">
-                  <div className="bg-white rounded-lg shadow-md overflow-hidden mb-8">
-                     <h2 className="text-xl font-semibold p-4 border-b">Cart Items</h2>
-                     <div className="divide-y divide-gray-200">
+                  <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden mb-8">
+                     <h2 className="text-xl font-semibold p-4 border-b dark:border-gray-700 dark:text-white">Cart Items</h2>
+                     <div className="divide-y divide-gray-200 dark:divide-gray-700">
                         {cartItems.map((item) => (
-                           <div key={item.id} className="p-5 flex justify-between items-center hover:bg-gray-50 transition-colors">
+                           <div key={item.id} className="p-5 flex justify-between items-center hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors">
                               <div className="flex items-center">
                                  {item.imageUrl && (
                                     <img
@@ -198,17 +196,17 @@ const Cart = () => {
                                     />
                                  )}
                                  <div>
-                                    <div className="font-medium text-gray-900 text-lg">{item.title}</div>
-                                    {item.instructor && <div className="text-gray-500 text-sm">By {item.instructor}</div>}
+                                    <div className="font-medium text-gray-900 dark:text-white text-lg">{item.title}</div>
+                                    {item.instructor && <div className="text-gray-500 dark:text-gray-400 text-sm">By {item.instructor}</div>}
                                  </div>
                               </div>
                               <div className="flex items-center">
-                                 <div className="text-gray-900 mr-4 font-semibold text-lg">
+                                 <div className="text-gray-900 dark:text-white mr-4 font-semibold text-lg">
                                     Rs.{item.price}
                                  </div>
                                  <button
                                     onClick={() => removeCourseFromCart(item.id)}
-                                    className="text-red-600 hover:bg-red-100 p-2 rounded-full transition-colors"
+                                    className="text-red-600 dark:text-red-400 hover:bg-red-100 dark:hover:bg-red-900/30 p-2 rounded-full transition-colors"
                                     aria-label="Remove item"
                                  >
                                     <FaTrash />
@@ -221,13 +219,13 @@ const Cart = () => {
                </div>
 
                {/* Billing Summary - Right Side (1/3 width on large screens) */}
-               <div className="bg-white rounded-lg shadow-md overflow-hidden sticky top-4">
-                  <h2 className="text-xl font-semibold p-4 border-b bg-gray-50">Order Summary</h2>
+               <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden sticky top-4">
+                  <h2 className="text-xl font-semibold p-4 border-b bg-gray-50 dark:bg-gray-700 dark:border-gray-600 dark:text-white">Order Summary</h2>
                   <div className="p-4">
-                     <div className="divide-y divide-gray-200">
+                     <div className="divide-y divide-gray-200 dark:divide-gray-700">
                         {cartItems.map((item) => (
                            <div key={item.id} className="py-3 flex justify-between">
-                              <div className="text-gray-700">{item.title}</div>
+                              <div className="text-gray-700 dark:text-gray-300">{item.title}</div>
                               <div className="font-medium">Rs.{item.price}</div>
                            </div>
                         ))}
@@ -238,23 +236,23 @@ const Cart = () => {
                               <input
                                  type="text"
                                  placeholder="Coupon code"
-                                 className="flex-1 border rounded p-2 text-sm"
+                                 className="flex-1 border dark:border-gray-600 rounded p-2 text-sm dark:bg-gray-700 dark:text-white"
                               />
-                              <button className="bg-gray-200 text-gray-800 px-3 py-2 rounded text-sm hover:bg-gray-300">
+                              <button className="bg-gray-200 text-gray-800 px-3 py-2 rounded text-sm hover:bg-gray-300 dark:bg-gray-600 dark:text-gray-200 dark:hover:bg-gray-500">
                                  Apply
                               </button>
                            </div>
                         </div>
 
                         <div className="py-3 flex justify-between">
-                           <div className="text-gray-700">Subtotal</div>
+                           <div className="text-gray-700 dark:text-gray-300">Subtotal</div>
                            <div className="font-medium">Rs.{totalPrice}</div>
                         </div>
                         <div className="py-3 flex justify-between">
-                           <div className="text-gray-700">Discount</div>
+                           <div className="text-gray-700 dark:text-gray-300">Discount</div>
                            <div className="font-medium text-green-600">Rs.0.00</div>
                         </div>
-                        <div className="py-3 flex justify-between font-bold text-lg">
+                        <div className="py-3 flex justify-between font-bold text-lg dark:text-white">
                            <div>Total</div>
                            <div>Rs.{totalPrice}</div>
                         </div>
@@ -270,14 +268,14 @@ const Cart = () => {
 
                      <button
                         onClick={continueShopping}
-                        className="w-full bg-gray-200 text-gray-800 font-medium py-2 rounded-lg hover:bg-gray-300 mt-4 transition-colors"
+                        className="w-full bg-gray-200 text-gray-800 dark:bg-gray-700 dark:text-gray-200 dark:hover:bg-gray-600 font-medium py-2 rounded-lg hover:bg-gray-300 mt-4 transition-colors"
                      >
                         Continue Shopping
                      </button>
 
                      {/* Add payment methods info */}
                      <div className="mt-4 text-center">
-                        <p className="text-xs text-gray-500">Secure payment powered by Razorpay</p>
+                        <p className="text-xs text-gray-500 dark:text-gray-400">Secure payment powered by Razorpay</p>
 
                      </div>
                   </div>

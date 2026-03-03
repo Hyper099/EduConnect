@@ -126,7 +126,7 @@ courseRouter.delete("/delete/:id", instructorAuth, async (req, res) => {
    }
 });
 
-// Get All Courses (JOIN)
+// Get All Courses (JOIN with category, instructor, enrollment count)
 courseRouter.get("/", async (req, res) => {
    try {
       const db = await connectDatabase();
@@ -137,12 +137,22 @@ courseRouter.get("/", async (req, res) => {
             CD.description,
             CD.price,
             CD.category_id,
+            CAT.name AS category,
             CD.duration,
             CD.access_period,
             CD.created_at,
-            C.instructor_id
+            C.instructor_id,
+            CONCAT(I.firstName, ' ', I.lastName) AS instructor_name,
+            COALESCE(E.enrollment_count, 0) AS students
          FROM COURSES C
          JOIN COURSE_DETAILS CD ON CD.course_id = C.id
+         LEFT JOIN CATEGORIES CAT ON CAT.id = CD.category_id
+         LEFT JOIN INSTRUCTOR I ON I.id = C.instructor_id
+         LEFT JOIN (
+            SELECT course_id, COUNT(*) AS enrollment_count
+            FROM ENROLLMENT
+            GROUP BY course_id
+         ) E ON E.course_id = C.id
       `);
       res.status(200).json(results);
    } catch (err) {
@@ -151,7 +161,7 @@ courseRouter.get("/", async (req, res) => {
    }
 });
 
-// Get single course by ID (JOIN)
+// Get single course by ID (JOIN with category, instructor, enrollment count)
 courseRouter.get("/:id", async (req, res) => {
    try {
       const { id } = req.params;
@@ -163,12 +173,22 @@ courseRouter.get("/:id", async (req, res) => {
             CD.description,
             CD.price,
             CD.category_id,
+            CAT.name AS category,
             CD.duration,
             CD.access_period,
             CD.created_at,
-            C.instructor_id
+            C.instructor_id,
+            CONCAT(I.firstName, ' ', I.lastName) AS instructor_name,
+            COALESCE(E.enrollment_count, 0) AS students
          FROM COURSES C
          JOIN COURSE_DETAILS CD ON CD.course_id = C.id
+         LEFT JOIN CATEGORIES CAT ON CAT.id = CD.category_id
+         LEFT JOIN INSTRUCTOR I ON I.id = C.instructor_id
+         LEFT JOIN (
+            SELECT course_id, COUNT(*) AS enrollment_count
+            FROM ENROLLMENT
+            GROUP BY course_id
+         ) E ON E.course_id = C.id
          WHERE C.id = ?
       `, [id]);
 

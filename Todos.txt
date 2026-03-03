@@ -1,0 +1,5 @@
+1. make the frontend better as there are unused components and the design is not good
+2. theres a unused courses page which should be used and its also better, and make it error free and connect to backend
+3. make the UI better over all and make it more user friendly
+4. implement light and dark mode
+5. optimize the performance of the frontend by reducing unnecessary re-renders and optimizing the code

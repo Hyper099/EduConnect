@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import API from "../../utils/api";
+import { toast } from '../../utils/toast';
 
 export default function InstructorDashboard() {
    const [courses, setCourses] = useState([]);
@@ -37,20 +38,13 @@ export default function InstructorDashboard() {
             const coursesResponse = await API.get("/instructor/course", {
                headers: { token },
             });
-            console.log(coursesResponse.data);
-            // // Fetch instructor stats
-            // const statsResponse = await API.get("/instructor/stats", {
-            //    headers: { token },
-            // });
 
             setCourses(coursesResponse.data);
-            // console.log(coursesResponse.data);
-            // setStats(statsResponse.data);
             setLoading(false);
          } catch (err) {
             setError("Failed to load dashboard data");
             setTimeout(() => setError(null), 3000);
-            console.log(err);
+            console.error(err);
             setLoading(false);
          }
       };
@@ -75,7 +69,6 @@ export default function InstructorDashboard() {
          accessPeriod:30 // Set default access period to 30 days
       };
 
-      console.log("Sending data:", formattedCourse);
       try {
          const token = localStorage.getItem("token");
          await API.post("/course/add", formattedCourse, {
@@ -86,7 +79,6 @@ export default function InstructorDashboard() {
          const response = await API.get("/instructor/course", {
             headers: { token },
          });
-         console.log(response.data);
          setCourses(response.data);
          setShowNewCourseForm(false);
          setNewCourse({
@@ -123,7 +115,7 @@ export default function InstructorDashboard() {
  
          const updatedCourses = courses.filter((c) => c.id !== course.id);
          setCourses(updatedCourses);
-         alert("Course deleted successfully!");
+         toast.success("Course deleted successfully!");
       }
       catch (err) {
          console.error("Failed to delete course:", err.response?.data || err);
@@ -141,7 +133,6 @@ export default function InstructorDashboard() {
          accessPeriod: 30
       };
 
-      console.log("Updating course:", formattedCourse);
       try {
          const token = localStorage.getItem("token");
          await API.put(`/course/update/${editingCourseId}`, formattedCourse, {
@@ -187,7 +178,6 @@ export default function InstructorDashboard() {
    const handleViewStudents = async (course) => {
       try {
          const token = localStorage.getItem("token");
-         console.log("insidde the fucntion");
          const response = await API.get(`/course/enrolled-students/${course.id}`, {
             headers: { token },
          });
@@ -202,28 +192,28 @@ export default function InstructorDashboard() {
 
    if (loading) {
       return (
-         <div className="flex justify-center items-center min-h-screen">
-            <div className="animate-spin rounded-full h-10 w-10 border-t-2 border-b-2 border-blue-500"></div>
+         <div className="flex justify-center items-center min-h-screen bg-gray-50 dark:bg-gray-900">
+            <div className="animate-spin rounded-full h-10 w-10 border-t-2 border-b-2 border-indigo-500"></div>
          </div>
       );
    }
 
    return (
-      <div className="bg-gray-50 min-h-screen">
+      <div className="bg-gray-50 dark:bg-gray-900 min-h-screen">
          <div className="container mx-auto px-4 py-8">
-            <h1 className="text-3xl font-bold text-gray-800 mb-6">Instructor Dashboard</h1>
+            <h1 className="text-3xl font-bold text-gray-800 dark:text-white mb-6">Instructor Dashboard</h1>
 
-            {error && <div className="bg-red-100 border-l-4 border-red-500 text-red-700 p-4 mb-4" role="alert">{error}</div>}
+            {error && <div className="bg-red-100 dark:bg-red-900/30 border-l-4 border-red-500 text-red-700 dark:text-red-400 p-4 mb-4" role="alert">{error}</div>}
 
 
 
             {/* Course Management */}
-            <div className="bg-white rounded-lg shadow mb-8">
-               <div className="p-6 border-b border-gray-200 flex justify-between items-center">
-                  <h2 className="text-xl font-bold text-gray-800">Your Courses</h2>
+            <div className="bg-white dark:bg-gray-800 rounded-lg shadow mb-8">
+               <div className="p-6 border-b border-gray-200 dark:border-gray-700 flex justify-between items-center">
+                  <h2 className="text-xl font-bold text-gray-800 dark:text-white">Your Courses</h2>
                   <button
                      onClick={() => setShowNewCourseForm(!showNewCourseForm)}
-                     className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-md transition"
+                     className="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-md transition"
                   >
                      {showNewCourseForm ? "Cancel" : "Create New Course"}
                   </button>
@@ -231,61 +221,61 @@ export default function InstructorDashboard() {
 
                {/* New Course Form */}
                {showNewCourseForm && (
-                  <div className="p-6 border-b border-gray-200">
+                  <div className="p-6 border-b border-gray-200 dark:border-gray-700">
                      <form onSubmit={handleCreateCourse} className="space-y-4">
                         <div>
-                           <label className="block text-sm font-medium text-gray-700 mb-1">Course Title</label>
+                           <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Course Title</label>
                            <input
                               type="text"
                               name="title"
                               value={newCourse.title}
                               onChange={handleNewCourseChange}
-                              className="w-full p-2 border rounded-md focus:ring focus:ring-blue-300"
+                              className="w-full p-2 border rounded-md focus:ring focus:ring-indigo-300 dark:bg-gray-700 dark:border-gray-600 dark:text-white dark:placeholder-gray-400"
                               required
                            />
                         </div>
                         <div>
-                           <label className="block text-sm font-medium text-gray-700 mb-1">Description</label>
+                           <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Description</label>
                            <textarea
                               name="description"
                               value={newCourse.description}
                               onChange={handleNewCourseChange}
-                              className="w-full p-2 border rounded-md focus:ring focus:ring-blue-300"
+                              className="w-full p-2 border rounded-md focus:ring focus:ring-indigo-300 dark:bg-gray-700 dark:border-gray-600 dark:text-white dark:placeholder-gray-400"
                               rows="3"
                               required
                            ></textarea>
                         </div>
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                            <div>
-                              <label className="block text-sm font-medium text-gray-700 mb-1">Duration (hours)</label>
+                              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Duration (hours)</label>
                               <input
                                  type="number"
                                  name="duration"
                                  value={newCourse.duration}
                                  onChange={handleNewCourseChange}
-                                 className="w-full p-2 border rounded-md focus:ring focus:ring-blue-300"
+                                 className="w-full p-2 border rounded-md focus:ring focus:ring-indigo-300 dark:bg-gray-700 dark:border-gray-600 dark:text-white dark:placeholder-gray-400"
                                  required
                               />
                            </div>
                            <div>
-                              <label className="block text-sm font-medium text-gray-700 mb-1">Price (Rs.)</label>
+                              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Price (Rs.)</label>
                               <input
                                  type="number"
                                  name="price"
                                  value={newCourse.price}
                                  onChange={handleNewCourseChange}
-                                 className="w-full p-2 border rounded-md focus:ring focus:ring-blue-300"
+                                 className="w-full p-2 border rounded-md focus:ring focus:ring-indigo-300 dark:bg-gray-700 dark:border-gray-600 dark:text-white dark:placeholder-gray-400"
                                  required
                               />
                            </div>
                            <div>
-                              <label className="block text-sm font-medium text-gray-700 mb-1">Category</label>
+                              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Category</label>
                               <input
                                  type="text"
                                  name="category"
                                  value={newCourse.category}
                                  onChange={handleNewCourseChange}
-                                 className="w-full p-2 border rounded-md focus:ring focus:ring-blue-300"
+                                 className="w-full p-2 border rounded-md focus:ring focus:ring-indigo-300 dark:bg-gray-700 dark:border-gray-600 dark:text-white dark:placeholder-gray-400"
                                  required
                               />
                            </div>
@@ -304,62 +294,62 @@ export default function InstructorDashboard() {
 
                {/* Edit Course Form */}
                {showEditCourseForm && (
-                  <div className="p-6 border-b border-gray-200">
-                     <h3 className="text-lg font-medium text-gray-800 mb-4">Edit Course</h3>
+                  <div className="p-6 border-b border-gray-200 dark:border-gray-700">
+                     <h3 className="text-lg font-medium text-gray-800 dark:text-white mb-4">Edit Course</h3>
                      <form onSubmit={handleUpdateCourse} className="space-y-4">
                         <div>
-                           <label className="block text-sm font-medium text-gray-700 mb-1">Course Title</label>
+                           <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Course Title</label>
                            <input
                               type="text"
                               name="title"
                               value={editCourse.title}
                               onChange={handleEditCourseChange}
-                              className="w-full p-2 border rounded-md focus:ring focus:ring-blue-300"
+                              className="w-full p-2 border rounded-md focus:ring focus:ring-indigo-300 dark:bg-gray-700 dark:border-gray-600 dark:text-white dark:placeholder-gray-400"
                               required
                            />
                         </div>
                         <div>
-                           <label className="block text-sm font-medium text-gray-700 mb-1">Description</label>
+                           <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Description</label>
                            <textarea
                               name="description"
                               value={editCourse.description}
                               onChange={handleEditCourseChange}
-                              className="w-full p-2 border rounded-md focus:ring focus:ring-blue-300"
+                              className="w-full p-2 border rounded-md focus:ring focus:ring-indigo-300 dark:bg-gray-700 dark:border-gray-600 dark:text-white dark:placeholder-gray-400"
                               rows="3"
                               required
                            ></textarea>
                         </div>
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                            <div>
-                              <label className="block text-sm font-medium text-gray-700 mb-1">Duration (hours)</label>
+                              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Duration (hours)</label>
                               <input
                                  type="number"
                                  name="duration"
                                  value={editCourse.duration}
                                  onChange={handleEditCourseChange}
-                                 className="w-full p-2 border rounded-md focus:ring focus:ring-blue-300"
+                                 className="w-full p-2 border rounded-md focus:ring focus:ring-indigo-300 dark:bg-gray-700 dark:border-gray-600 dark:text-white dark:placeholder-gray-400"
                                  required
                               />
                            </div>
                            <div>
-                              <label className="block text-sm font-medium text-gray-700 mb-1">Price (Rs.)</label>
+                              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Price (Rs.)</label>
                               <input
                                  type="number"
                                  name="price"
                                  value={editCourse.price}
                                  onChange={handleEditCourseChange}
-                                 className="w-full p-2 border rounded-md focus:ring focus:ring-blue-300"
+                                 className="w-full p-2 border rounded-md focus:ring focus:ring-indigo-300 dark:bg-gray-700 dark:border-gray-600 dark:text-white dark:placeholder-gray-400"
                                  required
                               />
                            </div>
                            <div>
-                              <label className="block text-sm font-medium text-gray-700 mb-1">Category</label>
+                              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Category</label>
                               <input
                                  type="text"
                                  name="category"
                                  value={editCourse.category}
                                  onChange={handleEditCourseChange}
-                                 className="w-full p-2 border rounded-md focus:ring focus:ring-blue-300"
+                                 className="w-full p-2 border rounded-md focus:ring focus:ring-indigo-300 dark:bg-gray-700 dark:border-gray-600 dark:text-white dark:placeholder-gray-400"
                                  required
                               />
                            </div>
@@ -368,13 +358,13 @@ export default function InstructorDashboard() {
                            <button
                               type="button"
                               onClick={handleCancelEdit}
-                              className="bg-gray-300 hover:bg-gray-400 text-gray-800 px-4 py-2 rounded-md transition"
+                              className="bg-gray-300 dark:bg-gray-600 hover:bg-gray-400 dark:hover:bg-gray-500 text-gray-800 dark:text-gray-200 px-4 py-2 rounded-md transition"
                            >
                               Cancel
                            </button>
                            <button
                               type="submit"
-                              className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-md transition"
+                              className="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-md transition"
                            >
                               Update Course
                            </button>
@@ -386,171 +376,59 @@ export default function InstructorDashboard() {
                {/* Courses List */}
                <div className="p-6">
                   {courses.length === 0 ? (
-                     <p className="text-gray-500 text-center py-4">You haven't created any courses yet.</p>
+                     <p className="text-gray-500 dark:text-gray-400 text-center py-4">You haven't created any courses yet.</p>
                   ) : (
                      <div className="overflow-x-auto">
-                        <table className="min-w-full divide-y divide-gray-200">
-                           <thead className="bg-gray-50">
+                        <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+                           <thead className="bg-gray-50 dark:bg-gray-700">
                               <tr>
-                                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Title</th>
-                                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Students</th>
-                                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Rating</th>
-                                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Price</th>
-                                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Title</th>
+                                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Students</th>
+                                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Rating</th>
+                                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Price</th>
+                                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Actions</th>
                               </tr>
                            </thead>
-                           <tbody className="bg-white divide-y divide-gray-200">
+                           <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
                               {courses.map((course) => (
-                                 <tr key={course.id}>
+                                 <tr key={course.id} className="hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
                                     {/* Course area */}
                                     <td className="px-6 py-4 whitespace-nowrap">
-                                       <div className="font-medium text-gray-900">{course.title}</div>
-                                       <div className="text-sm text-gray-500">{course.category}</div>
+                                       <div className="font-medium text-gray-900 dark:text-white">{course.title}</div>
+                                       <div className="text-sm text-gray-500 dark:text-gray-400">{course.category}</div>
                                     </td>
                                     {/* Student area */}
                                     <td className="px-6 py-4 whitespace-nowrap">
                                        <div className="flex items-center">
-                                          <span className="text-gray-900 font-medium mr-2 ">{course.enrolledStudents || 0}</span>
+                                          <span className="text-gray-900 dark:text-white font-medium mr-2 ">{course.enrolledStudents || 0}</span>
                                           <button
                                              onClick={() => handleViewStudents(course)}
-                                             className="text-xs text-blue-600 hover:text-blue-800 cursor-pointer"
+                                             className="text-xs text-blue-600 dark:text-indigo-400 hover:text-blue-900 dark:hover:text-indigo-300 cursor-pointer"
                                           // disabled={!course.enrolledStudents}
                                           >
                                              View
                                           </button>
                                        </div>
-                                       {showStudentsModal && (
-                                          <div
-                                             className="fixed inset-0 flex items-center justify-center z-50 p-4"
-                                             style={{ backdropFilter: "blur(8px)" }}
-                                             onClick={(e) => {
-                                                if (e.target === e.currentTarget) setShowStudentsModal(false);
-                                             }}
-                                          >
-                                             <div className="fixed inset-0 opacity-30"></div>
-
-                                             {/* Modal Content */}
-                                             <div className="bg-white rounded-xl shadow-2xl p-0 m-4 max-w-4xl w-full animate-fadeIn z-10 overflow-hidden">
-                                                {/* Modal Header */}
-                                                <div className="bg-gray-50 px-6 py-4 border-b border-gray-200 rounded-t-xl flex justify-between items-center">
-                                                   <h3 className="text-xl font-semibold text-gray-800">Enrolled Students</h3>
-                                                   <button
-                                                      onClick={() => setShowStudentsModal(false)}
-                                                      className="text-gray-500 hover:text-gray-700 bg-white rounded-full h-8 w-8 flex items-center justify-center border border-gray-200 hover:bg-gray-100 transition-colors"
-                                                   >
-                                                      ×
-                                                   </button>
-                                                </div>
-
-                                                {/* Modal Body */}
-                                                <div className="p-6">
-                                                   {studentData.length === 0 ? (
-                                                      <div className="text-gray-500 text-center py-10 bg-gray-50 rounded-lg">
-                                                         <svg className="w-12 h-12 mx-auto text-gray-400 mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
-                                                         </svg>
-                                                         <p className="text-lg">No students enrolled in this course.</p>
-                                                      </div>
-                                                   ) : (
-                                                      <div className="overflow-y-auto max-h-[60vh]">
-                                                         <table className="min-w-full divide-y divide-gray-200 border border-gray-200 rounded-lg overflow-hidden">
-                                                            <thead className="bg-gray-50">
-                                                               <tr>
-                                                                  <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider border-b">Name</th>
-                                                                  <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider border-b">Enrollment Date</th>
-                                                                  <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider border-b">Expiry Date</th>
-                                                                  <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider border-b">Status</th>
-                                                               </tr>
-                                                            </thead>
-                                                            <tbody className="bg-white divide-y divide-gray-200">
-                                                               {studentData.map((student, index) => (
-                                                                  <tr key={index} className="hover:bg-gray-50 transition-colors">
-                                                                     <td className="px-6 py-4 whitespace-nowrap">
-                                                                        <div className="flex items-center">
-                                                                           <div className="flex-shrink-0 h-10 w-10 bg-blue-100 text-blue-800 rounded-full flex items-center justify-center">
-                                                                              {student.firstName.charAt(0)}
-                                                                              {student.lastName.charAt(0)}
-                                                                           </div>
-                                                                           <div className="ml-4">
-                                                                              <div className="text-sm font-medium text-gray-900">{student.firstName} {student.lastName}</div>
-                                                                           </div>
-                                                                        </div>
-                                                                     </td>
-                                                                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700">
-                                                                        {new Date(student.enrollment_date).toLocaleDateString('en-US', {
-                                                                           year: 'numeric',
-                                                                           month: 'short',
-                                                                           day: 'numeric'
-                                                                        })}
-                                                                     </td>
-                                                                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700">
-                                                                        {new Date(student.expiry_date).toLocaleDateString('en-US', {
-                                                                           year: 'numeric',
-                                                                           month: 'short',
-                                                                           day: 'numeric'
-                                                                        })}
-                                                                     </td>
-                                                                     <td className="px-6 py-4 whitespace-nowrap">
-                                                                        <span className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-medium ${student.status === 'active' ? 'bg-green-100 text-green-800' :
-                                                                           student.status === 'expired' ? 'bg-red-100 text-red-800' :
-                                                                              'bg-yellow-100 text-yellow-800'
-                                                                           }`}>
-                                                                           {student.status === 'active' && (
-                                                                              <span className="w-2 h-2 bg-green-500 rounded-full mr-1.5"></span>
-                                                                           )}
-                                                                           {student.status === 'expired' && (
-                                                                              <span className="w-2 h-2 bg-red-500 rounded-full mr-1.5"></span>
-                                                                           )}
-                                                                           {student.status !== 'active' && student.status !== 'expired' && (
-                                                                              <span className="w-2 h-2 bg-yellow-500 rounded-full mr-1.5"></span>
-                                                                           )}
-                                                                           {student.status}
-                                                                        </span>
-                                                                     </td>
-                                                                  </tr>
-                                                               ))}
-                                                            </tbody>
-                                                         </table>
-                                                      </div>
-                                                   )}
-                                                </div>
-
-                                                {/* Modal Footer */}
-                                                <div className="bg-gray-50 px-6 py-4 border-t border-gray-200 rounded-b-xl">
-                                                   <div className="flex justify-end">
-                                                      <button
-                                                         onClick={() => setShowStudentsModal(false)}
-                                                         className="bg-gray-100 hover:bg-gray-200 text-gray-800 font-medium py-2 px-4 rounded-md transition-colors"
-                                                      >
-                                                         Close
-                                                      </button>
-                                                   </div>
-                                                </div>
-                                             </div>
-                                          </div>
-                                       )}
-
-
                                     </td>
                                     <td className="px-6 py-4 whitespace-nowrap">
                                        <div className="flex items-center">
                                           <span className="text-yellow-500 mr-1">★</span>
-                                          <span>{course.rating ? course.rating.toFixed(1) : "N/A"}</span>
+                                          <span className="text-gray-900 dark:text-white">{course.rating ? course.rating.toFixed(1) : "N/A"}</span>
                                        </div>
                                     </td>
-                                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
                                        Rs. {course.price}
                                     </td>
                                     <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
                                        <button
                                           onClick={() => handleEditClick(course)}
-                                          className="text-blue-600 hover:text-blue-900 mr-3"
+                                          className="text-blue-600 dark:text-indigo-400 hover:text-blue-900 dark:hover:text-indigo-300 mr-3"
                                        >
                                           Edit
                                        </button>
                                        <button
                                           onClick={() => handleDeleteClick(course)}
-                                          className="text-red-500 hover:text-blue-900 mr-3"
+                                          className="text-red-500 dark:text-red-400 hover:text-red-700 dark:hover:text-red-300 mr-3"
                                        >
                                           Delete
                                        </button>
@@ -565,28 +443,118 @@ export default function InstructorDashboard() {
                </div>
             </div>
          </div>
+
+         {/* Students Modal - rendered once outside the table */}
+         {showStudentsModal && (
+            <div
+               className="fixed inset-0 flex items-center justify-center z-50 p-4"
+               style={{ backdropFilter: "blur(8px)" }}
+               onClick={(e) => {
+                  if (e.target === e.currentTarget) setShowStudentsModal(false);
+               }}
+            >
+               <div className="fixed inset-0 opacity-30"></div>
+
+               {/* Modal Content */}
+               <div className="bg-white dark:bg-gray-800 rounded-xl shadow-2xl p-0 m-4 max-w-4xl w-full animate-fadeIn z-10 overflow-hidden">
+                  {/* Modal Header */}
+                  <div className="bg-gray-50 dark:bg-gray-700 px-6 py-4 border-b border-gray-200 dark:border-gray-600 rounded-t-xl flex justify-between items-center">
+                     <h3 className="text-xl font-semibold text-gray-800 dark:text-white">Enrolled Students</h3>
+                     <button
+                        onClick={() => setShowStudentsModal(false)}
+                        className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 bg-white dark:bg-gray-600 rounded-full h-8 w-8 flex items-center justify-center border border-gray-200 dark:border-gray-500 hover:bg-gray-100 dark:hover:bg-gray-500 transition-colors"
+                     >
+                        ×
+                     </button>
+                  </div>
+
+                  {/* Modal Body */}
+                  <div className="p-6">
+                     {studentData.length === 0 ? (
+                        <div className="text-gray-500 dark:text-gray-400 text-center py-10 bg-gray-50 dark:bg-gray-700 rounded-lg">
+                           <svg className="w-12 h-12 mx-auto text-gray-400 dark:text-gray-500 mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                           </svg>
+                           <p className="text-lg">No students enrolled in this course.</p>
+                        </div>
+                     ) : (
+                        <div className="overflow-y-auto max-h-[60vh]">
+                           <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700 border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden">
+                              <thead className="bg-gray-50 dark:bg-gray-700">
+                                 <tr>
+                                    <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider border-b dark:border-gray-600">Name</th>
+                                    <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider border-b dark:border-gray-600">Enrollment Date</th>
+                                    <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider border-b dark:border-gray-600">Expiry Date</th>
+                                    <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider border-b dark:border-gray-600">Status</th>
+                                 </tr>
+                              </thead>
+                              <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
+                                 {studentData.map((student, index) => (
+                                    <tr key={index} className="hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
+                                       <td className="px-6 py-4 whitespace-nowrap">
+                                          <div className="flex items-center">
+                                             <div className="flex-shrink-0 h-10 w-10 bg-indigo-100 dark:bg-indigo-900/30 text-indigo-800 dark:text-indigo-300 rounded-full flex items-center justify-center">
+                                                {student.firstName.charAt(0)}
+                                                {student.lastName.charAt(0)}
+                                             </div>
+                                             <div className="ml-4">
+                                                <div className="text-sm font-medium text-gray-900 dark:text-white">{student.firstName} {student.lastName}</div>
+                                             </div>
+                                          </div>
+                                       </td>
+                                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700 dark:text-gray-300">
+                                          {new Date(student.enrollment_date).toLocaleDateString('en-US', {
+                                             year: 'numeric',
+                                             month: 'short',
+                                             day: 'numeric'
+                                          })}
+                                       </td>
+                                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700 dark:text-gray-300">
+                                          {new Date(student.expiry_date).toLocaleDateString('en-US', {
+                                             year: 'numeric',
+                                             month: 'short',
+                                             day: 'numeric'
+                                          })}
+                                       </td>
+                                       <td className="px-6 py-4 whitespace-nowrap">
+                                          <span className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-medium ${student.status === 'active' ? 'bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-400' :
+                                             student.status === 'expired' ? 'bg-red-100 dark:bg-red-900/30 text-red-800 dark:text-red-400' :
+                                                'bg-yellow-100 dark:bg-yellow-900/30 text-yellow-800 dark:text-yellow-400'
+                                             }`}>
+                                             {student.status === 'active' && (
+                                                <span className="w-2 h-2 bg-green-500 rounded-full mr-1.5"></span>
+                                             )}
+                                             {student.status === 'expired' && (
+                                                <span className="w-2 h-2 bg-red-500 rounded-full mr-1.5"></span>
+                                             )}
+                                             {student.status !== 'active' && student.status !== 'expired' && (
+                                                <span className="w-2 h-2 bg-yellow-500 rounded-full mr-1.5"></span>
+                                             )}
+                                             {student.status}
+                                          </span>
+                                       </td>
+                                    </tr>
+                                 ))}
+                              </tbody>
+                           </table>
+                        </div>
+                     )}
+                  </div>
+
+                  {/* Modal Footer */}
+                  <div className="bg-gray-50 dark:bg-gray-700 px-6 py-4 border-t border-gray-200 dark:border-gray-600 rounded-b-xl">
+                     <div className="flex justify-end">
+                        <button
+                           onClick={() => setShowStudentsModal(false)}
+                           className="bg-gray-100 dark:bg-gray-600 hover:bg-gray-200 dark:hover:bg-gray-500 text-gray-800 dark:text-gray-200 font-medium py-2 px-4 rounded-md transition-colors"
+                        >
+                           Close
+                        </button>
+                     </div>
+                  </div>
+               </div>
+            </div>
+         )}
       </div >
    );
 }
-
-// const [stats, setStats] = useState({
-//    totalStudents: 0,
-//    totalCourses: 0,
-//    averageRating: 0,
-// });
-
-{/* Stats Overview
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-               <div className="bg-white rounded-lg shadow p-6">
-                  <h3 className="text-lg font-semibold text-gray-600 mb-2">Total Students</h3>
-                  <p className="text-3xl font-bold text-blue-600">{stats.totalStudents}</p>
-               </div>
-               <div className="bg-white rounded-lg shadow p-6">
-                  <h3 className="text-lg font-semibold text-gray-600 mb-2">Total Courses</h3>
-                  <p className="text-3xl font-bold text-green-600">{stats.totalCourses}</p>
-               </div>
-               <div className="bg-white rounded-lg shadow p-6">
-                  <h3 className="text-lg font-semibold text-gray-600 mb-2">Average Rating</h3>
-                  <p className="text-3xl font-bold text-yellow-600">{stats.averageRating.toFixed(1)}/5.0</p>
-               </div>
-            </div> */}

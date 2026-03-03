@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useCart } from "../../Context/CartContext";
 import API from "../../utils/api";
 
@@ -57,10 +57,9 @@ export default function Courses() {
                const response = await API.get("/student/course/enrolled", {
                   headers: { token }
                });
-               console.log(response.data);
                setEnrolledCourses(response.data.map(course => course.id));
             } catch (error) {
-               console.log("Error fetching enrolled courses:", error.response.data.message);
+               // silently handle - user may not be a student
             }
          }
       };
